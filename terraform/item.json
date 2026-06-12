@@ -1,0 +1,29 @@
+{
+  "document_id": {
+    "S": "doc001"
+  },
+  "title": {
+    "S": "Tai lieu test Mini LMS"
+  },
+  "subject": {
+    "S": "Dien toan dam may"
+  },
+  "description": {
+    "S": "Tai lieu test upload len S3 bang AWS CLI"
+  },
+  "file_name": {
+    "S": "test-document.txt"
+  },
+  "file_type": {
+    "S": "txt"
+  },
+  "s3_key": {
+    "S": "test-document.txt"
+  },
+  "upload_time": {
+    "S": "2026-05-28 19:33:22"
+  },
+  "status": {
+    "S": "uploaded"
+  }
+}

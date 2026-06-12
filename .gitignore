@@ -1,0 +1,23 @@
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/crash.log
+terraform/crash.*.log
+
+# Lambda package temp folder
+lambda/package/
+
+# Test/output files
+terraform/response.json
+terraform/documents-output.json
+terraform/downloaded-test-document.txt
+terraform/test-document.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

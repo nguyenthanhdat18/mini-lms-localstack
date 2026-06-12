@@ -1,0 +1,7 @@
+{
+  "title": "Tai lieu upload qua API",
+  "subject": "Dien toan dam may",
+  "description": "Day la tai lieu duoc upload thong qua API Gateway va Lambda",
+  "file_name": "api-upload-test.txt",
+  "file_content": "VGFpIGxpZXUgdXBsb2FkIHR1IEFQSSBHYXRld2F5"
+}

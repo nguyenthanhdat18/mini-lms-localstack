@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="api-url" content="http://localhost:4566/restapis/a9blhryz93/dev/_user_request_/documents">
+  <title>Mini LMS Cloud</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}
+    .topbar-brand{display:flex;align-items:center;gap:10px}
+    .brand-icon{width:34px;height:34px;background:#2563eb;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px}
+    .brand-name{font-size:15px;font-weight:600;color:#1e293b}
+    .brand-sub{font-size:11px;color:#94a3b8;margin-top:1px}
+    .topbar-nav{display:flex;gap:2px}
+    .nav-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;border:none;background:transparent;color:#64748b;font-size:13.5px;cursor:pointer;transition:.15s}
+    .nav-btn:hover{background:#f1f5f9;color:#1e293b}
+    .nav-btn.active{background:#eff6ff;color:#2563eb;font-weight:500}
+    .nav-btn i{font-size:17px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#2563eb;cursor:pointer}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:6px}
+
+    /* PAGES */
+    .page{display:none;padding:28px;max-width:1200px;margin:0 auto}
+    .page.active{display:block}
+
+    /* METRICS */
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+    .metric{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px}
+    .metric-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+    .metric-label{font-size:12px;color:#64748b;margin-bottom:5px;font-weight:500}
+    .metric-value{font-size:24px;font-weight:600;color:#1e293b}
+    .metric-change{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:4px}
+    .up{color:#16a34a} .down{color:#dc2626}
+
+    /* CARDS */
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+    .card-title{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+    .card-title .sub{font-size:12px;color:#94a3b8;font-weight:400;cursor:pointer}
+    .card-title .sub:hover{color:#2563eb}
+    .dash-grid{display:grid;grid-template-columns:1fr 310px;gap:16px}
+    .col-left{display:flex;flex-direction:column;gap:16px}
+    .col-right{display:flex;flex-direction:column;gap:16px}
+
+    /* RECENT ITEMS */
+    .recent-list{display:flex;flex-direction:column;gap:8px}
+    .recent-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;border:1px solid #f1f5f9;transition:.15s;cursor:pointer}
+    .recent-item:hover{border-color:#bfdbfe;background:#f8faff}
+    .file-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+    .fi-pdf{background:#fef2f2;color:#dc2626}
+    .fi-img{background:#f0fdf4;color:#16a34a}
+    .fi-doc{background:#eff6ff;color:#2563eb}
+    .fi-vid{background:#fdf4ff;color:#9333ea}
+    .fi-mp3{background:#fff7ed;color:#ea580c}
+    .recent-info{flex:1;min-width:0}
+    .recent-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#1e293b}
+    .recent-meta{font-size:11px;color:#94a3b8;margin-top:2px}
+
+    /* BADGES */
+    .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+    .badge-blue{background:#dbeafe;color:#1e40af}
+    .badge-green{background:#dcfce7;color:#166534}
+    .badge-gray{background:#f1f5f9;color:#64748b}
+    .badge-orange{background:#fff7ed;color:#9a3412}
+
+    /* SUBJECT BARS */
+    .subject-list{display:flex;flex-direction:column;gap:10px}
+    .subject-row{display:flex;align-items:center;gap:10px}
+    .subject-name{font-size:12px;color:#475569;min-width:140px}
+    .bar-wrap{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:3px;background:#2563eb;transition:width .6s ease}
+    .bar-count{font-size:12px;color:#94a3b8;min-width:24px;text-align:right}
+
+    /* ACTIVITY */
+    .activity{display:flex;flex-direction:column;gap:12px}
+    .act-item{display:flex;align-items:flex-start;gap:10px}
+    .act-dot{width:30px;height:30px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .act-dot i{font-size:15px;color:#2563eb}
+    .act-text{font-size:12.5px;color:#475569;line-height:1.5}
+    .act-text strong{color:#1e293b;font-weight:500}
+    .act-time{font-size:11px;color:#94a3b8;margin-top:2px}
+
+    /* FILE TYPE SUMMARY */
+    .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .type-box{border-radius:10px;padding:12px;text-align:center}
+    .type-num{font-size:20px;font-weight:600;margin-bottom:2px}
+    .type-lbl{font-size:11px;font-weight:500}
+
+    /* UPLOAD PAGE */
+    .upload-layout{display:grid;grid-template-columns:1fr 340px;gap:24px}
+    .dropzone{border:2px dashed #cbd5e1;border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:18px;background:#fafafa}
+    .dropzone:hover,.dropzone.drag{border-color:#2563eb;background:#eff6ff}
+    .dropzone .dz-icon{font-size:40px;color:#94a3b8;display:block;margin-bottom:10px}
+    .dropzone .dz-title{font-size:14px;font-weight:500;color:#475569;margin-bottom:4px}
+    .dropzone .dz-sub{font-size:12px;color:#94a3b8}
+    .form-group{margin-bottom:15px}
+    .form-label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+    .form-control{width:100%;padding:10px 13px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;background:#fff;transition:.15s;outline:none}
+    .form-control:focus{border-color:#2563eb;box-shadow:0 0 0 3px #dbeafe}
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;transition:.15s}
+    .btn-primary:hover{background:#1d4ed8}
+    .btn-primary:active{transform:scale(.98)}
+    .btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+
+    /* PIPELINE */
+    .pipeline-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px}
+    .pipeline-title{font-size:13px;font-weight:600;color:#475569;margin-bottom:14px}
+    .pipeline-steps{display:flex;flex-direction:column;gap:7px}
+    .step-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:12.5px;transition:.3s}
+    .step-row.done{background:#f0fdf4;color:#166534}
+    .step-row.active{background:#eff6ff;color:#1e40af}
+    .step-row.pending{background:#f8fafc;color:#94a3b8}
+    .step-row i{font-size:16px;flex-shrink:0}
+    .progress-wrap{margin-top:14px}
+    .progress-label{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:5px}
+    .progress-bar{height:5px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);border-radius:3px;transition:width .25s}
+    .info-box{margin-top:14px;padding:12px;background:#f0f9ff;border-radius:8px;border-left:3px solid #0ea5e9}
+    .info-box-title{font-size:12px;font-weight:600;color:#0369a1;margin-bottom:4px}
+    .info-box-text{font-size:11px;color:#0369a1;line-height:1.6}
+
+    /* LIST PAGE */
+    .list-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+    .search-wrap{flex:1;min-width:200px;position:relative}
+    .search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:16px;color:#94a3b8}
+    .search-input{width:100%;padding:10px 13px 10px 35px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;background:#fff}
+    .search-input:focus{border-color:#2563eb}
+    .filter-select{padding:10px 13px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;color:#475569;background:#fff;outline:none;cursor:pointer}
+    .btn-outline{display:flex;align-items:center;gap:6px;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#475569;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
+    .btn-outline:hover{background:#f8fafc;border-color:#cbd5e1}
+    .btn-outline i{font-size:16px}
+
+    /* DOC CARDS */
+    .doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .doc-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px;cursor:pointer;transition:.2s}
+    .doc-card:hover{border-color:#93c5fd;box-shadow:0 4px 16px rgba(37,99,235,.08)}
+    .doc-thumb{height:78px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+    .doc-name{font-size:13px;font-weight:500;color:#1e293b;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .doc-subject{font-size:11px;color:#94a3b8;margin-bottom:10px}
+    .doc-footer{display:flex;align-items:center;justify-content:space-between}
+    .doc-actions{display:flex;gap:4px}
+    .icon-btn{width:28px;height:28px;border-radius:7px;border:1px solid #e2e8f0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#64748b;transition:.15s}
+    .icon-btn:hover{background:#f1f5f9;color:#1e293b;border-color:#cbd5e1}
+    .icon-btn.danger:hover{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+    .icon-btn i{font-size:14px}
+
+    /* DOC LIST VIEW */
+    .doc-list-item{display:flex;align-items:center;gap:14px;padding:12px 16px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;transition:.15s}
+    .doc-list-item:hover{border-color:#93c5fd;background:#f8faff}
+    .doc-list-info{flex:1;min-width:0}
+    .doc-list-name{font-size:13.5px;font-weight:500;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .doc-list-meta{font-size:11px;color:#94a3b8;margin-top:2px}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal-box{background:#fff;border-radius:14px;padding:28px;max-width:380px;width:90%;text-align:center}
+    .modal-icon{font-size:40px;color:#ef4444;margin-bottom:12px}
+    .modal-title{font-size:16px;font-weight:600;margin-bottom:6px}
+    .modal-sub{font-size:13px;color:#64748b;margin-bottom:22px;line-height:1.5}
+    .modal-actions{display:flex;gap:10px}
+    .btn-cancel{flex:1;padding:10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#475569;font-size:14px;cursor:pointer}
+    .btn-cancel:hover{background:#f8fafc}
+    .btn-danger{flex:1;padding:10px;border:none;border-radius:8px;background:#ef4444;color:#fff;font-size:14px;font-weight:500;cursor:pointer}
+    .btn-danger:hover{background:#dc2626}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:.3s;display:flex;align-items:center;gap:8px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast i{font-size:16px;color:#4ade80}
+    .toast.error i{color:#f87171}
+
+    /* EMPTY */
+    .empty-state{text-align:center;padding:60px 20px;color:#94a3b8}
+    .empty-state i{font-size:44px;display:block;margin-bottom:12px}
+    .empty-state p{font-size:14px}
+
+    /* LOADING */
+    .loading{text-align:center;padding:40px;color:#94a3b8;font-size:14px}
+    .spin{display:inline-block;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon"><i class="ti ti-books"></i></div>
+    <div>
+      <div class="brand-name">Mini LMS Cloud</div>
+      <div class="brand-sub"><span class="status-dot"></span>LocalStack đang chạy</div>
+    </div>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-btn active" onclick="showPage('dash',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</button>
+    <button class="nav-btn" onclick="showPage('upload',this)"><i class="ti ti-cloud-upload"></i> Upload</button>
+    <button class="nav-btn" onclick="showPage('list',this)"><i class="ti ti-files"></i> Tài liệu</button>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:12px;color:#94a3b8" id="api-status">Đang kết nối...</span>
+    <div class="avatar">GV</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon"><i class="ti ti-trash"></i></div>
+    <div class="modal-title">Xóa tài liệu?</div>
+    <div class="modal-sub" id="delete-modal-sub">Hành động này không thể hoàn tác.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Hủy</button>
+      <button class="btn-danger" onclick="confirmDelete()">Xóa</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== DASHBOARD ======================== -->
+<div class="page active" id="page-dash">
+  <div class="metrics" id="metrics">
+    <div class="metric">
+      <div class="metric-icon" style="background:#eff6ff">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      </div>
+      <div class="metric-label">Tổng tài liệu</div>
+      <div class="metric-value" id="m-total">—</div>
+      <div class="metric-change up">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> S3 bucket
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:#f0fdf4">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div class="metric-label">Đã watermark</div>
+      <div class="metric-value" id="m-processed">—</div>
+      <div class="metric-change up">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Lambda xử lý
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:#fff7ed">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      </div>
+      <div class="metric-label">DynamoDB records</div>
+      <div class="metric-value" id="m-db">—</div>
+      <div class="metric-change up">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg> Metadata
+      </div>
+    </div>
+    <div class="metric">
+      <div class="metric-icon" style="background:#fdf4ff">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="metric-label">CloudFront CDN</div>
+      <div class="metric-value">Active</div>
+      <div class="metric-change up">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Port 4566
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="col-left">
+      <div class="card">
+        <div class="card-title">Tài liệu mới nhất <span class="sub" onclick="showPage('list', document.querySelectorAll('.nav-btn')[2])">Xem tất cả →</span></div>
+        <div class="recent-list" id="recent-list">
+          <div class="loading"><i class="ti ti-loader spin"></i> Đang tải...</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Phân bố theo loại file</div>
+        <div class="type-grid" id="type-grid">
+          <div class="type-box" style="background:#fef2f2"><div class="type-num" style="color:#dc2626" id="t-pdf">0</div><div class="type-lbl" style="color:#dc2626">PDF</div></div>
+          <div class="type-box" style="background:#eff6ff"><div class="type-num" style="color:#2563eb" id="t-doc">0</div><div class="type-lbl" style="color:#2563eb">DOCX</div></div>
+          <div class="type-box" style="background:#f0fdf4"><div class="type-num" style="color:#16a34a" id="t-img">0</div><div class="type-lbl" style="color:#16a34a">Ảnh</div></div>
+          <div class="type-box" style="background:#fdf4ff"><div class="type-num" style="color:#9333ea" id="t-vid">0</div><div class="type-lbl" style="color:#9333ea">Video/MP3</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-right">
+      <div class="card">
+        <div class="card-title">Theo môn học</div>
+        <div class="subject-list" id="subject-list">
+          <div style="font-size:12px;color:#94a3b8">Đang tải...</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Kiến trúc hệ thống</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px">
+            <span style="width:28px;height:28px;border-radius:7px;background:#eff6ff;display:flex;align-items:center;justify-content:center"><i class="ti ti-users" style="color:#2563eb;font-size:15px"></i></span>
+            <span style="color:#475569"><strong style="color:#1e293b">Frontend</strong> → S3 Static Website</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px">
+            <span style="width:28px;height:28px;border-radius:7px;background:#fff7ed;display:flex;align-items:center;justify-content:center"><i class="ti ti-api" style="color:#ea580c;font-size:15px"></i></span>
+            <span style="color:#475569"><strong style="color:#1e293b">API Gateway</strong> → REST /documents</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px">
+            <span style="width:28px;height:28px;border-radius:7px;background:#f0fdf4;display:flex;align-items:center;justify-content:center"><i class="ti ti-bolt" style="color:#16a34a;font-size:15px"></i></span>
+            <span style="color:#475569"><strong style="color:#1e293b">Lambda</strong> → Upload / List / Delete</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px">
+            <span style="width:28px;height:28px;border-radius:7px;background:#fdf4ff;display:flex;align-items:center;justify-content:center"><i class="ti ti-world" style="color:#9333ea;font-size:15px"></i></span>
+            <span style="color:#475569"><strong style="color:#1e293b">CloudFront CDN</strong> → Phân phối file</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8fafc;border-radius:8px;font-size:12px">
+            <span style="width:28px;height:28px;border-radius:7px;background:#fef2f2;display:flex;align-items:center;justify-content:center"><i class="ti ti-wand" style="color:#dc2626;font-size:15px"></i></span>
+            <span style="color:#475569"><strong style="color:#1e293b">S3 Event</strong> → Lambda Watermark</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== UPLOAD ======================== -->
+<div class="page" id="page-upload">
+  <div class="upload-layout">
+    <div>
+      <div class="dropzone" id="dropzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
+        <i class="ti ti-cloud-upload dz-icon"></i>
+        <div class="dz-title" id="dz-title">Kéo thả file vào đây hoặc nhấn để chọn</div>
+        <div class="dz-sub" id="dz-sub">PDF, DOCX, PNG, JPG, MP4, MP3 · Tối đa 10 MB</div>
+      </div>
+      <input type="file" id="file-input" style="display:none" accept=".pdf,.docx,.doc,.png,.jpg,.jpeg,.mp4,.mp3" onchange="handleFileSelect(this)">
+
+      <div class="form-group">
+        <label class="form-label">Tên tài liệu *</label>
+        <input class="form-control" type="text" id="doc-title" placeholder="VD: Bài giảng chương 5 AWS Lambda">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Môn học *</label>
+        <select class="form-control" id="doc-subject">
+          <option value="">-- Chọn môn học --</option>
+          <option>Điện toán đám mây</option>
+          <option>Cơ sở dữ liệu</option>
+          <option>Hệ thống phân tán</option>
+          <option>Lập trình Web</option>
+          <option>Mạng máy tính</option>
+          <option>Lập trình Python</option>
+          <option>Toán rời rạc</option>
+          <option>Khác</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mô tả</label>
+        <textarea class="form-control" id="doc-desc" rows="3" placeholder="Nhập mô tả ngắn về tài liệu..."></textarea>
+      </div>
+      <button class="btn-primary" id="upload-btn" onclick="uploadDocument()">
+        <i class="ti ti-upload"></i> Upload tài liệu
+      </button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="pipeline-card">
+        <div class="pipeline-title">Quy trình xử lý sau upload</div>
+
+        <div class="progress-wrap" id="upload-progress" style="display:none">
+          <div class="progress-label"><span id="prog-label">Đang upload...</span><span id="prog-pct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        </div>
+
+        <div class="pipeline-steps" style="margin-top:12px">
+          <div class="step-row done" id="step1"><i class="ti ti-check"></i> S3 nhận file — lưu vào bucket</div>
+          <div class="step-row active" id="step2"><i class="ti ti-loader"></i> S3 Event kích hoạt Lambda</div>
+          <div class="step-row pending" id="step3"><i class="ti ti-wand"></i> Thêm watermark bản quyền</div>
+          <div class="step-row pending" id="step4"><i class="ti ti-photo-down"></i> Nén ảnh (quality 65%)</div>
+          <div class="step-row pending" id="step5"><i class="ti ti-database"></i> Cập nhật DynamoDB metadata</div>
+          <div class="step-row pending" id="step6"><i class="ti ti-world"></i> CloudFront CDN cache file</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-box-title"><i class="ti ti-info-circle"></i> LocalStack + Docker Desktop</div>
+          <div class="info-box-text">Toàn bộ quy trình chạy 100% offline trên máy tính của bạn. Không cần tài khoản AWS thật.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">CloudFront CDN</div>
+        <div style="font-size:12px;color:#475569;line-height:1.7">
+          Sau khi upload, file được phân phối qua <strong style="color:#1e293b">CloudFront</strong> — người dùng ở bất kỳ đâu đều tải file với tốc độ cao nhất nhờ edge caching.
+          <br><br>
+          <span style="display:inline-flex;align-items:center;gap:4px;background:#f0fdf4;color:#166534;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500"><i class="ti ti-check" style="font-size:13px"></i> CDN đang hoạt động</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== LIST ======================== -->
+<div class="page" id="page-list">
+  <div class="list-toolbar">
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input class="search-input" type="text" placeholder="Tìm kiếm tài liệu, môn học..." id="search-input" oninput="filterDocs()">
+    </div>
+    <select class="filter-select" id="filter-type" onchange="filterDocs()">
+      <option value="">Tất cả loại</option>
+      <option value="pdf">PDF</option>
+      <option value="docx">DOCX</option>
+      <option value="image">Ảnh</option>
+      <option value="video">Video</option>
+    </select>
+    <select class="filter-select" id="filter-subject" onchange="filterDocs()">
+      <option value="">Tất cả môn</option>
+      <option>Điện toán đám mây</option>
+      <option>Cơ sở dữ liệu</option>
+      <option>Hệ thống phân tán</option>
+      <option>Lập trình Web</option>
+      <option>Mạng máy tính</option>
+    </select>
+    <button class="btn-outline" onclick="loadDocuments()"><i class="ti ti-refresh"></i> Làm mới</button>
+    <button class="btn-outline" onclick="toggleView(this)" title="Chuyển sang dạng danh sách"><i class="ti ti-layout-list" id="view-icon"></i></button>
+  </div>
+  <div id="doc-container">
+    <div class="loading"><i class="ti ti-loader spin"></i> Đang tải tài liệu...</div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+function getApiUrl() {
+  const meta = document.querySelector('meta[name="api-url"]');
+  if (meta && meta.content) return meta.content;
+  return 'http://localhost:4566/restapis/__API_ID__/dev/_user_request_/documents';
+}
+const API_BASE = getApiUrl();
+const S3_BASE  = 'http://localhost:4566/mini-lms-documents';
+
+// ── STATE ───────────────────────────────────────────────
+let allDocs = [];
+let deleteTargetId = null;
+let gridMode = false;
+let selectedFile = null;
+
+// ── INIT ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  checkApi();
+  loadDocuments();
+});
+
+async function checkApi() {
+  try {
+    const r = await fetch(API_BASE, {method:'GET'});
+    document.getElementById('api-status').textContent = r.ok ? '● API sẵn sàng' : '● API lỗi';
+    document.getElementById('api-status').style.color = r.ok ? '#16a34a' : '#dc2626';
+  } catch {
+    document.getElementById('api-status').textContent = '● Chưa kết nối';
+    document.getElementById('api-status').style.color = '#dc2626';
+  }
+}
+
+// ── PAGES ───────────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'list') loadDocuments();
+  if (id === 'dash') updateDashboard();
+}
+
+// ── MOCK DATA (dùng khi chưa kết nối API) ───────────────
+const MOCK_DOCS = [
+  { document_id:'doc-001', title:'Bài giảng chương 3 - AWS Lambda', file_name:'lambda_ch3.pdf', subject:'Điện toán đám mây', file_type:'application/pdf', file_size:2457600, upload_time:'2025-06-10T08:30:00Z', status:'processed', processed_key:'watermarked/lambda_ch3.pdf' },
+  { document_id:'doc-002', title:'Slide Hệ thống phân tán tuần 5', file_name:'distributed_w5.pdf', subject:'Hệ thống phân tán', file_type:'application/pdf', file_size:1843200, upload_time:'2025-06-09T14:15:00Z', status:'processed', processed_key:'watermarked/distributed_w5.pdf' },
+  { document_id:'doc-003', title:'Sơ đồ ERD Cơ sở dữ liệu', file_name:'erd_diagram.png', subject:'Cơ sở dữ liệu', file_type:'image/png', file_size:512000, upload_time:'2025-06-08T10:00:00Z', status:'processed', processed_key:'watermarked/erd_diagram.png' },
+  { document_id:'doc-004', title:'Bài tập Python tuần 4', file_name:'python_ex4.docx', subject:'Lập trình Python', file_type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document', file_size:204800, upload_time:'2025-06-07T16:45:00Z', status:'uploaded' },
+  { document_id:'doc-005', title:'Video hướng dẫn cài Docker', file_name:'docker_setup.mp4', subject:'Điện toán đám mây', file_type:'video/mp4', file_size:52428800, upload_time:'2025-06-06T09:20:00Z', status:'uploaded' },
+  { document_id:'doc-006', title:'Bài giảng TCP/IP nâng cao', file_name:'tcpip_adv.pdf', subject:'Mạng máy tính', file_type:'application/pdf', file_size:3145728, upload_time:'2025-06-05T11:30:00Z', status:'processed', processed_key:'watermarked/tcpip_adv.pdf' },
+  { document_id:'doc-007', title:'Lab 2 - Lập trình Web React', file_name:'lab2_react.docx', subject:'Lập trình Web', file_type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document', file_size:358400, upload_time:'2025-06-04T13:00:00Z', status:'processed' },
+  { document_id:'doc-008', title:'Toán rời rạc - Đồ thị', file_name:'discrete_graph.pdf', subject:'Toán rời rạc', file_type:'application/pdf', file_size:1024000, upload_time:'2025-06-03T08:00:00Z', status:'processed', processed_key:'watermarked/discrete_graph.pdf' },
+  { document_id:'doc-009', title:'Bản nhạc nền thuyết trình', file_name:'bgm_present.mp3', subject:'Khác', file_type:'audio/mpeg', file_size:4096000, upload_time:'2025-06-02T17:30:00Z', status:'uploaded' },
+  { document_id:'doc-010', title:'Ảnh kiến trúc microservices', file_name:'microservice_arch.jpg', subject:'Hệ thống phân tán', file_type:'image/jpeg', file_size:768000, upload_time:'2025-06-01T10:45:00Z', status:'processed', processed_key:'watermarked/microservice_arch.jpg' },
+];
+
+// ── LOAD DOCS ───────────────────────────────────────────
+async function loadDocuments() {
+  try {
+    const r = await fetch(API_BASE);
+    if (!r.ok) throw new Error('API lỗi');
+    const data = await r.json();
+    allDocs = data.documents || [];
+    renderDocs(allDocs);
+    updateDashboard();
+  } catch (e) {
+    // Dùng dữ liệu mẫu khi API chưa kết nối
+    allDocs = MOCK_DOCS;
+    renderDocs(allDocs);
+    updateDashboard();
+    // Hiện banner demo nhỏ thay vì màn hình trống
+    const banner = document.createElement('div');
+    banner.id = 'demo-banner';
+    banner.style.cssText = 'background:#fefce8;border:1px solid #fde68a;border-radius:9px;padding:10px 16px;font-size:12px;color:#92400e;display:flex;align-items:center;gap:8px;margin-bottom:14px';
+    banner.innerHTML = '<i class="ti ti-info-circle" style="font-size:16px;color:#d97706;flex-shrink:0"></i><span><strong>Chế độ Demo</strong> — API LocalStack chưa kết nối. Đang hiển thị dữ liệu mẫu.</span>';
+    const container = document.getElementById('doc-container');
+    if (!document.getElementById('demo-banner')) container.parentNode.insertBefore(banner, container);
+  }
+}
+
+// ── RENDER DOCS ─────────────────────────────────────────
+function fileIconClass(ft) {
+  if (!ft) return 'fi-doc';
+  ft = ft.toLowerCase();
+  if (ft.includes('pdf')) return 'fi-pdf';
+  if (['png','jpg','jpeg','gif','webp'].some(e=>ft.includes(e))) return 'fi-img';
+  if (['mp4','avi','mov','mkv'].some(e=>ft.includes(e))) return 'fi-vid';
+  if (['mp3','wav','aac'].some(e=>ft.includes(e))) return 'fi-mp3';
+  return 'fi-doc';
+}
+function fileIconTi(ft) {
+  const c = fileIconClass(ft);
+  if (c==='fi-pdf') return 'ti-file-type-pdf';
+  if (c==='fi-img') return 'ti-photo';
+  if (c==='fi-vid') return 'ti-video';
+  if (c==='fi-mp3') return 'ti-music';
+  return 'ti-file-type-doc';
+}
+function thumbBg(ft) {
+  const c = fileIconClass(ft);
+  if (c==='fi-pdf') return '#fef2f2';
+  if (c==='fi-img') return '#f0fdf4';
+  if (c==='fi-vid') return '#fdf4ff';
+  if (c==='fi-mp3') return '#fff7ed';
+  return '#eff6ff';
+}
+function iconColor(ft) {
+  const c = fileIconClass(ft);
+  if (c==='fi-pdf') return '#dc2626';
+  if (c==='fi-img') return '#16a34a';
+  if (c==='fi-vid') return '#9333ea';
+  if (c==='fi-mp3') return '#ea580c';
+  return '#2563eb';
+}
+function fmtSize(b) {
+  b = Number(b);
+  if (!b) return '';
+  if (b > 1048576) return (b/1048576).toFixed(1)+' MB';
+  return Math.round(b/1024)+' KB';
+}
+function fmtTime(t) {
+  if (!t) return '';
+  try { return new Date(t).toLocaleDateString('vi-VN'); } catch { return t; }
+}
+function esc(s) { return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// SVG icons inline — hiển thị luôn dù CDN lỗi
+function svgThumb(ft, big=false) {
+  const sz = big ? 44 : 22;
+  const c = fileIconClass(ft);
+  const col = iconColor(ft);
+  const bg = thumbBg(ft);
+  const ext = c==='fi-pdf'?'PDF':c==='fi-img'?'IMG':c==='fi-vid'?'MP4':c==='fi-mp3'?'MP3':'DOC';
+  // SVG paths cho từng loại
+  const paths = {
+    'fi-pdf': `<path stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" points="14 2 14 8 20 8"/><line stroke="${col}" stroke-width="1.8" stroke-linecap="round" x1="9" y1="13" x2="15" y2="13"/><line stroke="${col}" stroke-width="1.8" stroke-linecap="round" x1="9" y1="17" x2="15" y2="17"/>`,
+    'fi-img': `<rect stroke="${col}" stroke-width="1.8" fill="none" x="3" y="3" width="18" height="18" rx="2"/><circle stroke="${col}" stroke-width="1.8" fill="none" cx="8.5" cy="8.5" r="1.5"/><polyline stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" points="21 15 16 10 5 21"/>`,
+    'fi-vid': `<polygon stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" points="23 7 16 12 23 17 23 7"/><rect stroke="${col}" stroke-width="1.8" fill="none" x="1" y="5" width="15" height="14" rx="2"/>`,
+    'fi-mp3': `<path stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 18V5l12-2v13"/><circle stroke="${col}" stroke-width="1.8" fill="none" cx="6" cy="18" r="3"/><circle stroke="${col}" stroke-width="1.8" fill="none" cx="18" cy="16" r="3"/>`,
+    'fi-doc': `<path stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline stroke="${col}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" points="14 2 14 8 20 8"/><line stroke="${col}" stroke-width="1.8" stroke-linecap="round" x1="9" y1="13" x2="15" y2="13"/><line stroke="${col}" stroke-width="1.8" stroke-linecap="round" x1="9" y1="17" x2="12" y2="17"/>`,
+  };
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${paths[c]||paths['fi-doc']}</svg>`;
+}
+
+function svgBtn(type) {
+  if (type==='download') return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+  if (type==='trash')  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+  if (type==='eye')    return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  return '';
+}
+
+function fileTypeBadge(ft) {
+  const c = fileIconClass(ft);
+  const labels = {'fi-pdf':'PDF','fi-img':'Ảnh','fi-vid':'Video','fi-mp3':'MP3','fi-doc':'DOC'};
+  return labels[c] || 'FILE';
+}
+
+function renderDocs(docs) {
+  const c = document.getElementById('doc-container');
+  if (!docs.length) {
+    c.innerHTML = `<div class="empty-state">${svgThumb('','')}<p>Chưa có tài liệu nào.<br>Hãy upload tài liệu đầu tiên!</p></div>`;
+    return;
+  }
+  if (gridMode) {
+    // Chế độ danh sách
+    c.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">'+docs.map(d=>`
+      <div class="doc-list-item">
+        <div class="file-icon ${fileIconClass(d.file_type)}" style="width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          ${svgThumb(d.file_type)}
+        </div>
+        <div class="doc-list-info">
+          <div class="doc-list-name">${esc(d.title||d.file_name)}</div>
+          <div class="doc-list-meta">${esc(d.subject||'')} · ${fmtSize(d.file_size)} · ${fmtTime(d.upload_time)}</div>
+        </div>
+        <span class="badge ${d.status==='processed'?'badge-green':'badge-blue'}">${d.status==='processed'?'Đã xử lý':'Đã upload'}</span>
+        <div class="doc-actions" style="margin-left:8px">
+          ${d.processed_key?`<button class="icon-btn" onclick="viewWatermark('${esc(d.processed_key)}')" title="Xem watermark">${svgBtn('eye')}</button>`:''}
+          <button class="icon-btn" onclick="downloadDoc('${esc(d.document_id)}','${esc(d.file_name)}')" title="Tải xuống">${svgBtn('download')}</button>
+          <button class="icon-btn danger" onclick="openDeleteModal('${esc(d.document_id)}','${esc(d.title||d.file_name)}')" title="Xóa">${svgBtn('trash')}</button>
+        </div>
+      </div>`).join('')+'</div>';
+  } else {
+    // Chế độ lưới
+    c.innerHTML = '<div class="doc-grid">'+docs.map(d=>`
+      <div class="doc-card">
+        <div class="doc-thumb" style="background:${thumbBg(d.file_type)};position:relative;flex-direction:column;gap:8px">
+          ${svgThumb(d.file_type, true)}
+          <span style="font-size:11px;font-weight:700;letter-spacing:.06em;color:${iconColor(d.file_type)};opacity:.85">${fileTypeBadge(d.file_type)}</span>
+        </div>
+        <div class="doc-name">${esc(d.title||d.file_name)}</div>
+        <div class="doc-subject">${esc(d.subject||'')} ${fmtSize(d.file_size)?'· '+fmtSize(d.file_size):''}</div>
+        <div class="doc-footer">
+          <span class="badge ${d.status==='processed'?'badge-green':'badge-blue'}">${d.status==='processed'?'Đã xử lý':'Đã upload'}</span>
+          <div class="doc-actions">
+            ${d.processed_key?`<button class="icon-btn" onclick="viewWatermark('${esc(d.processed_key)}')" title="Xem watermark">${svgBtn('eye')}</button>`:''}
+            <button class="icon-btn" onclick="downloadDoc('${esc(d.document_id)}','${esc(d.file_name)}')" title="Tải xuống">${svgBtn('download')}</button>
+            <button class="icon-btn danger" onclick="openDeleteModal('${esc(d.document_id)}','${esc(d.title||d.file_name)}')" title="Xóa">${svgBtn('trash')}</button>
+          </div>
+        </div>
+      </div>`).join('')+'</div>';
+  }
+}
+
+function filterDocs() {
+  const q     = document.getElementById('search-input').value.toLowerCase();
+  const type  = document.getElementById('filter-type').value;
+  const subj  = document.getElementById('filter-subject').value;
+  const filtered = allDocs.filter(d => {
+    const matchQ    = !q || (d.title||'').toLowerCase().includes(q) || (d.subject||'').toLowerCase().includes(q) || (d.file_name||'').toLowerCase().includes(q);
+    const matchType = !type || (type==='pdf'&&d.file_type?.includes('pdf'))
+                            || (type==='docx'&&(d.file_type?.includes('doc')))
+                            || (type==='image'&&['png','jpg','jpeg','gif','webp'].some(e=>d.file_type?.includes(e)))
+                            || (type==='video'&&['mp4','avi','mov'].some(e=>d.file_type?.includes(e)));
+    const matchSubj = !subj || d.subject === subj;
+    return matchQ && matchType && matchSubj;
+  });
+  renderDocs(filtered);
+}
+
+function toggleView(btn) {
+  gridMode = !gridMode;
+  // gridMode=true → đang ở chế độ LIST (icon hiển thị để chuyển sang GRID)
+  // gridMode=false → đang ở chế độ GRID (icon hiển thị để chuyển sang LIST)
+  document.getElementById('view-icon').className = gridMode ? 'ti ti-layout-list' : 'ti ti-layout-grid';
+  btn.title = gridMode ? 'Chuyển sang dạng lưới' : 'Chuyển sang dạng danh sách';
+  renderDocs(allDocs);
+}
+
+// ── DASHBOARD ───────────────────────────────────────────
+function updateDashboard() {
+  document.getElementById('m-total').textContent = allDocs.length;
+  const proc = allDocs.filter(d=>d.status==='processed').length;
+  document.getElementById('m-processed').textContent = proc;
+  document.getElementById('m-db').textContent = allDocs.length;
+
+  // type counts
+  document.getElementById('t-pdf').textContent = allDocs.filter(d=>d.file_type?.includes('pdf')).length;
+  document.getElementById('t-doc').textContent = allDocs.filter(d=>d.file_type?.includes('doc')).length;
+  document.getElementById('t-img').textContent = allDocs.filter(d=>['png','jpg','jpeg','gif','webp'].some(e=>d.file_type?.includes(e))).length;
+  document.getElementById('t-vid').textContent = allDocs.filter(d=>['mp4','avi','mov','mp3','wav'].some(e=>d.file_type?.includes(e))).length;
+
+  // recent
+  const rl = document.getElementById('recent-list');
+  if (!allDocs.length) { rl.innerHTML='<div style="font-size:13px;color:#94a3b8;text-align:center;padding:20px">Chưa có tài liệu</div>'; }
+  else {
+    const recent = [...allDocs].sort((a,b)=>new Date(b.upload_time)-new Date(a.upload_time)).slice(0,5);
+    rl.innerHTML = recent.map(d=>`
+      <div class="recent-item">
+        <div class="file-icon ${fileIconClass(d.file_type)}"><i class="ti ${fileIconTi(d.file_type)}"></i></div>
+        <div class="recent-info">
+          <div class="recent-name">${esc(d.title||d.file_name)}</div>
+          <div class="recent-meta">${esc(d.subject||'')} · ${fmtSize(d.file_size)} · ${fmtTime(d.upload_time)}</div>
+        </div>
+        <span class="badge ${d.status==='processed'?'badge-green':'badge-blue'}">${d.status==='processed'?'Đã xử lý':'Upload'}</span>
+      </div>`).join('');
+  }
+
+  // subjects
+  const subjMap = {};
+  allDocs.forEach(d=>{ if(d.subject) subjMap[d.subject]=(subjMap[d.subject]||0)+1; });
+  const sorted = Object.entries(subjMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const max = sorted[0]?.[1]||1;
+  const sl = document.getElementById('subject-list');
+  if (!sorted.length) { sl.innerHTML='<div style="font-size:12px;color:#94a3b8">Chưa có dữ liệu</div>'; }
+  else {
+    sl.innerHTML = sorted.map(([name,cnt])=>`
+      <div class="subject-row">
+        <div class="subject-name">${esc(name)}</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(cnt/max*100)}%"></div></div>
+        <div class="bar-count">${cnt}</div>
+      </div>`).join('');
+  }
+}
+
+// ── UPLOAD ──────────────────────────────────────────────
+function handleFileSelect(input) {
+  if (input.files[0]) setSelectedFile(input.files[0]);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag');
+  if (e.dataTransfer.files[0]) setSelectedFile(e.dataTransfer.files[0]);
+}
+function setSelectedFile(f) {
+  selectedFile = f;
+  document.getElementById('dz-title').textContent = f.name;
+  document.getElementById('dz-sub').textContent = fmtSize(f.size) + ' · Sẵn sàng upload';
+  if (!document.getElementById('doc-title').value) {
+    document.getElementById('doc-title').value = f.name.replace(/\.[^/.]+$/,'');
+  }
+}
+
+async function uploadDocument() {
+  const title   = document.getElementById('doc-title').value.trim();
+  const subject = document.getElementById('doc-subject').value;
+  const desc    = document.getElementById('doc-desc').value.trim();
+  if (!title)   { showToast('Vui lòng nhập tên tài liệu', true); return; }
+  if (!subject) { showToast('Vui lòng chọn môn học', true); return; }
+  if (!selectedFile) { showToast('Vui lòng chọn file', true); return; }
+
+  const btn = document.getElementById('upload-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader spin"></i> Đang upload...';
+
+  // Animate pipeline
+  document.getElementById('upload-progress').style.display = 'block';
+  const steps = ['step1','step2','step3','step4','step5','step6'];
+  steps.forEach(s=>{ document.getElementById(s).className='step-row pending'; });
+  document.getElementById('step1').className='step-row done';
+
+  let pct = 0;
+  const iv = setInterval(()=>{
+    pct = Math.min(pct+5, 90);
+    document.getElementById('prog-fill').style.width = pct+'%';
+    document.getElementById('prog-pct').textContent = pct+'%';
+    const idx = Math.floor(pct/16);
+    for (let i=1;i<steps.length;i++) {
+      document.getElementById(steps[i]).className = i<idx?'step-row done':i===idx?'step-row active':'step-row pending';
+    }
+  }, 120);
+
+  // Dùng Promise để đảm bảo reader hoàn thành trước khi reset button
+  const readFile = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = () => reject(new Error('Không đọc được file'));
+    reader.readAsDataURL(file);
+  });
+
+  try {
+    const b64 = await readFile(selectedFile);
+    const body = JSON.stringify({
+      title, subject, description: desc,
+      file_name: selectedFile.name,
+      file_content: b64,
+      content_type: selectedFile.type
+    });
+    const r = await fetch(API_BASE, { method:'POST', headers:{'Content-Type':'application/json'}, body });
+    clearInterval(iv);
+    document.getElementById('prog-fill').style.width='100%';
+    document.getElementById('prog-pct').textContent='100%';
+    steps.forEach(s=>{ document.getElementById(s).className='step-row done'; });
+    document.getElementById('prog-label').textContent='Hoàn thành!';
+
+    if (r.ok) {
+      showToast('Upload thành công: ' + title);
+      allDocs = [];
+      setTimeout(()=>{ loadDocuments(); resetUploadForm(); }, 1200);
+    } else {
+      const errText = await r.text().catch(()=>'');
+      showToast('Lỗi upload: ' + (errText || r.status), true);
+    }
+  } catch (e) {
+    clearInterval(iv);
+    showToast('Lỗi: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-upload"></i> Upload tài liệu';
+  }
+}
+
+function resetUploadForm() {
+  selectedFile = null;
+  document.getElementById('doc-title').value = '';
+  document.getElementById('doc-subject').value = '';
+  document.getElementById('doc-desc').value = '';
+  document.getElementById('dz-title').textContent = 'Kéo thả file vào đây hoặc nhấn để chọn';
+  document.getElementById('dz-sub').textContent = 'PDF, DOCX, PNG, JPG, MP4, MP3 · Tối đa 10 MB';
+  document.getElementById('upload-progress').style.display = 'none';
+  const steps = ['step1','step2','step3','step4','step5','step6'];
+  steps.forEach((s,i)=>{ document.getElementById(s).className=i===0?'step-row done':i===1?'step-row active':'step-row pending'; });
+}
+
+// ── DOWNLOAD ────────────────────────────────────────────
+async function downloadDoc(docId, fileName) {
+  try {
+    // Xây dựng URL endpoint download đúng cách
+    const apiRoot = API_BASE.endsWith('/documents')
+      ? API_BASE.slice(0, -'/documents'.length)
+      : API_BASE.replace(/\/[^\/]*$/, '');
+    const downloadUrl = `${apiRoot}/documents/${docId}/download`;
+
+    const r = await fetch(downloadUrl);
+    if (r.ok) {
+      const data = await r.json();
+      if (data.download_url) {
+        // Tạo link ẩn để tải xuống thay vì window.open (tránh bị chặn popup)
+        const a = document.createElement('a');
+        a.href = data.download_url;
+        a.download = fileName || 'download';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast('Đang tải xuống: ' + (fileName || docId));
+        return;
+      }
+    }
+    // Fallback: thử tải trực tiếp từ S3
+    const s3Url = `${S3_BASE}/uploads/${encodeURIComponent(fileName)}`;
+    const a = document.createElement('a');
+    a.href = s3Url;
+    a.download = fileName || 'download';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch (e) {
+    // Fallback cuối: mở thẳng URL S3
+    try {
+      window.open(`${S3_BASE}/uploads/${encodeURIComponent(fileName)}`, '_blank');
+    } catch {
+      showToast('Không thể tải xuống. Kiểm tra kết nối API.', true);
+    }
+  }
+}
+
+function viewWatermark(key) {
+  const url = `${S3_BASE}/${key}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ── DELETE ──────────────────────────────────────────────
+function openDeleteModal(id, name) {
+  deleteTargetId = id;
+  document.getElementById('delete-modal-sub').textContent = `Xóa tài liệu "${name}"? Hành động này không thể hoàn tác.`;
+  document.getElementById('deleteModal').classList.add('show');
+}
+function closeDeleteModal() {
+  deleteTargetId = null;
+  document.getElementById('deleteModal').classList.remove('show');
+}
+async function confirmDelete() {
+  if (!deleteTargetId) return;
+  try {
+    const r = await fetch(`${API_BASE}/${deleteTargetId}`, {method:'DELETE'});
+    closeDeleteModal();
+    if (r.ok) {
+      allDocs = allDocs.filter(d=>d.document_id!==deleteTargetId);
+      renderDocs(allDocs); updateDashboard();
+      showToast('Đã xóa tài liệu thành công');
+    } else { showToast('Lỗi khi xóa tài liệu', true); }
+  } catch { showToast('Lỗi kết nối API', true); closeDeleteModal(); }
+}
+
+// ── TOAST ───────────────────────────────────────────────
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.querySelector('i').className = isError ? 'ti ti-alert-circle' : 'ti ti-check';
+  t.className = isError ? 'toast error show' : 'toast show';
+  setTimeout(()=>{ t.classList.remove('show'); }, 3500);
+}
+</script>
+</body>
+</html>
